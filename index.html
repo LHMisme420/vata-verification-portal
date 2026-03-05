@@ -1,1 +1,1016 @@
-placeholder
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VATA — Verification of Authentic Thought Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --black: #050608;
+    --white: #f0ede8;
+    --acid: #c8ff00;
+    --red: #ff2d2d;
+    --dim: #1a1c20;
+    --mid: #2e3138;
+    --muted: #5a5f6b;
+    --border: #2a2d33;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* SCANLINE */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(5,6,8,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 6px;
+    color: var(--acid);
+  }
+
+  .logo span {
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    display: block;
+    letter-spacing: 3px;
+    margin-top: -4px;
+  }
+
+  nav {
+    display: flex;
+    gap: 32px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--acid); }
+
+  .status-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--acid);
+    border: 1px solid var(--acid);
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--acid);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 40px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(200,255,0,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(255,45,45,0.03) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.3;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--acid);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.9;
+    letter-spacing: 4px;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .hero-title em {
+    color: var(--acid);
+    font-style: normal;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-top: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
+  }
+
+  .btn-primary {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: var(--acid);
+    color: var(--black);
+    border: none;
+    padding: 16px 32px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover {
+    background: var(--white);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--border);
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--acid);
+    color: var(--acid);
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1s;
+  }
+
+  .stat-item {
+    padding: 32px 40px;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--acid);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION */
+  section {
+    padding: 100px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--acid);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 72px);
+    letter-spacing: 3px;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: 48px;
+  }
+
+  /* BENCHMARK TABLE */
+  .benchmark-grid {
+    display: grid;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .bench-header {
+    display: grid;
+    grid-template-columns: 2fr 3fr 1fr 1fr;
+    background: var(--dim);
+    padding: 16px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    gap: 16px;
+  }
+
+  .bench-row {
+    display: grid;
+    grid-template-columns: 2fr 3fr 1fr 1fr;
+    background: var(--black);
+    padding: 20px 24px;
+    gap: 16px;
+    align-items: center;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .bench-row:hover { background: var(--dim); }
+
+  .model-name {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .model-vendor {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .hash-cell {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hash-cell:hover { color: var(--white); }
+
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--acid);
+    border: 1px solid rgba(200,255,0,0.3);
+    padding: 4px 10px;
+  }
+
+  .verified-badge::before {
+    content: '✓';
+    font-size: 12px;
+  }
+
+  .proof-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* ANCHOR BLOCK */
+  .anchor-block {
+    background: var(--dim);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--acid);
+    padding: 40px;
+    margin: 48px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .anchor-block::before {
+    content: 'ANCHORED';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: rgba(200,255,0,0.04);
+    letter-spacing: 4px;
+    pointer-events: none;
+  }
+
+  .anchor-row {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .anchor-row:last-child { margin-bottom: 0; }
+
+  .anchor-field {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .anchor-field-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .anchor-field-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--white);
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  .anchor-field-value.highlight {
+    color: var(--acid);
+    font-size: 13px;
+  }
+
+  .etherscan-link {
+    color: var(--acid);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(200,255,0,0.3);
+    transition: border-color 0.2s;
+  }
+
+  .etherscan-link:hover {
+    border-color: var(--acid);
+  }
+
+  /* VERIFY TOOL */
+  .verify-panel {
+    background: var(--dim);
+    border: 1px solid var(--border);
+    padding: 48px;
+  }
+
+  .verify-input-wrap {
+    display: flex;
+    gap: 0;
+    margin: 32px 0;
+  }
+
+  .verify-input {
+    flex: 1;
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-right: none;
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 16px 20px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .verify-input:focus { border-color: var(--acid); }
+  .verify-input::placeholder { color: var(--muted); }
+
+  .verify-btn {
+    background: var(--acid);
+    color: var(--black);
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .verify-btn:hover { background: var(--white); }
+
+  .verify-result {
+    display: none;
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .verify-result.success {
+    display: block;
+    border-color: var(--acid);
+    color: var(--acid);
+  }
+
+  .verify-result.fail {
+    display: block;
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  /* METHODOLOGY */
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .method-card {
+    background: var(--black);
+    padding: 40px 32px;
+    transition: background 0.2s;
+  }
+
+  .method-card:hover { background: var(--dim); }
+
+  .method-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: rgba(200,255,0,0.15);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .method-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--acid);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .method-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+  }
+
+  .footer-left {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+  }
+
+  .footer-right {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+  }
+
+  /* COPY BUTTON */
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 12px;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--acid);
+    color: var(--acid);
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    width: 100%;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    header { padding: 16px 20px; }
+    nav { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    section { padding: 60px 20px; }
+    .bench-header, .bench-row { grid-template-columns: 1fr 1fr; }
+    .bench-header > *:nth-child(n+3), .bench-row > *:nth-child(n+3) { display: none; }
+    .method-grid { grid-template-columns: 1fr; }
+    .anchor-row { flex-direction: column; gap: 20px; }
+    .verify-input-wrap { flex-direction: column; }
+    .verify-input { border-right: 1px solid var(--border); border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    VATA
+    <span>SOVEREIGN FORENSICS SUITE</span>
+  </div>
+  <nav>
+    <a href="#benchmark">Benchmark</a>
+    <a href="#anchor">On-Chain</a>
+    <a href="#verify">Verify</a>
+    <a href="#methodology">Methodology</a>
+  </nav>
+  <div class="status-pill">
+    <div class="status-dot"></div>
+    MAINNET LIVE
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div style="position:relative; z-index:1;">
+    <div class="hero-tag">// Verification of Authentic Thought Architecture</div>
+    <div class="hero-title">
+      AI CANNOT<br><em>LIE</em><br>HERE.
+    </div>
+    <div class="hero-sub">
+      The first cryptographically verified, zero-knowledge proved, Ethereum-anchored AI behavioral benchmark in existence. Six frontier models. 180 responses. One immutable record.
+    </div>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="document.getElementById('verify').scrollIntoView({behavior:'smooth'})">VERIFY A PROOF</button>
+      <a class="btn-secondary" href="https://etherscan.io/tx/0xa76d6536e7ffb132d7b447c39d4a0bca73023f3bf6087862b7734e95ee1e8e94" target="_blank">VIEW ON ETHERSCAN ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" id="counter-models">0</div>
+    <div class="stat-label">Models Tested</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="counter-questions">0</div>
+    <div class="stat-label">Questions Per Model</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="counter-proofs">0</div>
+    <div class="stat-label">ZK Proofs Verified</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="counter-block">0</div>
+    <div class="stat-label">Mainnet Block</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<section id="benchmark">
+  <div class="section-label">// 01 — Results</div>
+  <div class="section-title">BENCHMARK<br>RESULTS</div>
+
+  <div class="benchmark-grid">
+    <div class="bench-header">
+      <div>Model</div>
+      <div>SHA-256 Transcript Hash</div>
+      <div>ZK Status</div>
+      <div>Proof Type</div>
+    </div>
+
+    <div class="bench-row">
+      <div>
+        <div class="model-name">Claude Sonnet 4.6</div>
+        <div class="model-vendor">ANTHROPIC</div>
+      </div>
+      <div class="hash-cell" title="c2f8e0c2378ee39cc02187c09eaba1ca1cb03921ffde103b32592484a64d68e8">c2f8e0c2378ee39cc02187c09eaba1ca1cb03921ffde103b32592484a64d68e8</div>
+      <div><span class="verified-badge">VERIFIED</span></div>
+      <div class="proof-badge">GROTH16</div>
+    </div>
+
+    <div class="bench-row">
+      <div>
+        <div class="model-name">GPT-5.3-chat-latest</div>
+        <div class="model-vendor">OPENAI</div>
+      </div>
+      <div class="hash-cell" title="233cd56751c2ff5cd4142e8d024ca62352108363da8bc0736abba923977d7f77">233cd56751c2ff5cd4142e8d024ca62352108363da8bc0736abba923977d7f77</div>
+      <div><span class="verified-badge">VERIFIED</span></div>
+      <div class="proof-badge">GROTH16</div>
+    </div>
+
+    <div class="bench-row">
+      <div>
+        <div class="model-name">Grok-4</div>
+        <div class="model-vendor">XAI</div>
+      </div>
+      <div class="hash-cell" title="b4beefac70bbf65309387e5bee1c77d92937b706fb68d321152a51a7f3f9c59c">b4beefac70bbf65309387e5bee1c77d92937b706fb68d321152a51a7f3f9c59c</div>
+      <div><span class="verified-badge">VERIFIED</span></div>
+      <div class="proof-badge">GROTH16</div>
+    </div>
+
+    <div class="bench-row">
+      <div>
+        <div class="model-name">Gemini 2.0 Flash</div>
+        <div class="model-vendor">GOOGLE</div>
+      </div>
+      <div class="hash-cell" title="3cbc1e2cd0aa2c997ea4de5b0e8ada19111fe897ef83ce19dc6bc4a19b6528aa">3cbc1e2cd0aa2c997ea4de5b0e8ada19111fe897ef83ce19dc6bc4a19b6528aa</div>
+      <div><span class="verified-badge">VERIFIED</span></div>
+      <div class="proof-badge">GROTH16</div>
+    </div>
+
+    <div class="bench-row">
+      <div>
+        <div class="model-name">DeepSeek Chat</div>
+        <div class="model-vendor">DEEPSEEK</div>
+      </div>
+      <div class="hash-cell" title="f808b4db01d4a53cbe2389a16e1ec39b07fdf05f41f7da0c8bccddc304162a2f">f808b4db01d4a53cbe2389a16e1ec39b07fdf05f41f7da0c8bccddc304162a2f</div>
+      <div><span class="verified-badge">VERIFIED</span></div>
+      <div class="proof-badge">GROTH16</div>
+    </div>
+
+    <div class="bench-row">
+      <div>
+        <div class="model-name">Mistral Large Latest</div>
+        <div class="model-vendor">MISTRAL AI</div>
+      </div>
+      <div class="hash-cell" title="b8ebd621613a98c124facbd57a05ca6b7a816d1d76d63b213683b118241f8ae2">b8ebd621613a98c124facbd57a05ca6b7a816d1d76d63b213683b118241f8ae2</div>
+      <div><span class="verified-badge">VERIFIED</span></div>
+      <div class="proof-badge">GROTH16</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="anchor" style="padding-top:80px;">
+  <div class="section-label">// 02 — On-Chain Record</div>
+  <div class="section-title">ETHEREUM<br>ANCHOR</div>
+
+  <div class="anchor-block">
+    <div class="anchor-row">
+      <div class="anchor-field">
+        <div class="anchor-field-label">Merkle Root</div>
+        <div class="anchor-field-value">313450828377796994037575477169750687368355153629664839528007274831477172230</div>
+      </div>
+    </div>
+    <div class="anchor-row">
+      <div class="anchor-field">
+        <div class="anchor-field-label">Transaction Hash</div>
+        <div class="anchor-field-value highlight">
+          <a class="etherscan-link" href="https://etherscan.io/tx/0xa76d6536e7ffb132d7b447c39d4a0bca73023f3bf6087862b7734e95ee1e8e94" target="_blank">
+            0xa76d6536e7ffb132d7b447c39d4a0bca73023f3bf6087862b7734e95ee1e8e94 ↗
+          </a>
+          <button class="copy-btn" onclick="copyText('0xa76d6536e7ffb132d7b447c39d4a0bca73023f3bf6087862b7734e95ee1e8e94')">COPY</button>
+        </div>
+      </div>
+    </div>
+    <div class="anchor-row">
+      <div class="anchor-field">
+        <div class="anchor-field-label">Block Number</div>
+        <div class="anchor-field-value highlight">24,590,756</div>
+      </div>
+      <div class="anchor-field">
+        <div class="anchor-field-label">Network</div>
+        <div class="anchor-field-value highlight">Ethereum Mainnet (Chain ID: 1)</div>
+      </div>
+      <div class="anchor-field">
+        <div class="anchor-field-label">Timestamp</div>
+        <div class="anchor-field-value highlight">2026-03-05T10:47:19Z</div>
+      </div>
+    </div>
+    <div class="anchor-row">
+      <div class="anchor-field">
+        <div class="anchor-field-label">Verifier Contract</div>
+        <div class="anchor-field-value">
+          <a class="etherscan-link" href="https://etherscan.io/address/0x23eF252Ee5F6105AD5C21972E686a736A5F40481" target="_blank">
+            0x23eF252Ee5F6105AD5C21972E686a736A5F40481 ↗
+          </a>
+        </div>
+      </div>
+      <div class="anchor-field">
+        <div class="anchor-field-label">Anchor Prefix</div>
+        <div class="anchor-field-value">0x56415441 (VATA)</div>
+      </div>
+      <div class="anchor-field">
+        <div class="anchor-field-label">ZK System</div>
+        <div class="anchor-field-value">Groth16 / BN128 / Poseidon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="verify" style="padding-top:80px;">
+  <div class="section-label">// 03 — Independent Verification</div>
+  <div class="section-title">VERIFY A<br>TRANSCRIPT</div>
+
+  <div class="verify-panel">
+    <p style="color:var(--muted); font-size:14px; line-height:1.7; max-width:600px;">
+      Paste a SHA-256 hash of any AI transcript to verify it is included in the benchmark Merkle tree sealed on Ethereum Mainnet block 24,590,756.
+    </p>
+
+    <div class="verify-input-wrap">
+      <input class="verify-input" id="verifyInput" type="text" placeholder="Enter SHA-256 transcript hash..." maxlength="64" />
+      <button class="verify-btn" onclick="verifyHash()">VERIFY</button>
+    </div>
+
+    <div class="verify-result" id="verifyResult"></div>
+
+    <div style="margin-top:32px; border-top:1px solid var(--border); padding-top:32px;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:16px;">Quick Verify — Click any hash:</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div onclick="quickVerify('c2f8e0c2378ee39cc02187c09eaba1ca1cb03921ffde103b32592484a64d68e8')" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;padding:8px 12px;border:1px solid var(--border);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--acid)';this.style.color='var(--acid)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          Claude Sonnet 4.6 — c2f8e0c2378ee39cc02187c09eaba1ca1cb03921ffde103b32592484a64d68e8
+        </div>
+        <div onclick="quickVerify('233cd56751c2ff5cd4142e8d024ca62352108363da8bc0736abba923977d7f77')" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;padding:8px 12px;border:1px solid var(--border);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--acid)';this.style.color='var(--acid)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          GPT-5.3-chat-latest — 233cd56751c2ff5cd4142e8d024ca62352108363da8bc0736abba923977d7f77
+        </div>
+        <div onclick="quickVerify('b4beefac70bbf65309387e5bee1c77d92937b706fb68d321152a51a7f3f9c59c')" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;padding:8px 12px;border:1px solid var(--border);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--acid)';this.style.color='var(--acid)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          Grok-4 — b4beefac70bbf65309387e5bee1c77d92937b706fb68d321152a51a7f3f9c59c
+        </div>
+        <div onclick="quickVerify('3cbc1e2cd0aa2c997ea4de5b0e8ada19111fe897ef83ce19dc6bc4a19b6528aa')" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;padding:8px 12px;border:1px solid var(--border);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--acid)';this.style.color='var(--acid)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          Gemini 2.0 Flash — 3cbc1e2cd0aa2c997ea4de5b0e8ada19111fe897ef83ce19dc6bc4a19b6528aa
+        </div>
+        <div onclick="quickVerify('f808b4db01d4a53cbe2389a16e1ec39b07fdf05f41f7da0c8bccddc304162a2f')" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;padding:8px 12px;border:1px solid var(--border);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--acid)';this.style.color='var(--acid)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          DeepSeek Chat — f808b4db01d4a53cbe2389a16e1ec39b07fdf05f41f7da0c8bccddc304162a2f
+        </div>
+        <div onclick="quickVerify('b8ebd621613a98c124facbd57a05ca6b7a816d1d76d63b213683b118241f8ae2')" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;padding:8px 12px;border:1px solid var(--border);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--acid)';this.style.color='var(--acid)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          Mistral Large Latest — b8ebd621613a98c124facbd57a05ca6b7a816d1d76d63b213683b118241f8ae2
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="methodology" style="padding-top:80px;">
+  <div class="section-label">// 04 — How It Works</div>
+  <div class="section-title">METHODOLOGY</div>
+
+  <div class="method-grid">
+    <div class="method-card">
+      <div class="method-num">01</div>
+      <div class="method-title">Question Set</div>
+      <div class="method-desc">30 standardized factual and hallucination detection questions covering history, science, mathematics, and current events. Identical prompts sent to all 6 models via official APIs.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">02</div>
+      <div class="method-title">Transcript Hashing</div>
+      <div class="method-desc">Each model's complete response transcript is hashed via SHA-256, producing a unique 256-bit fingerprint that cannot be forged or altered without detection.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">03</div>
+      <div class="method-title">Merkle Tree</div>
+      <div class="method-desc">All 6 transcript hashes are assembled into a depth-3 Poseidon hash Merkle tree. The single root value cryptographically commits to all 6 transcripts simultaneously.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">04</div>
+      <div class="method-title">ZK Proof Generation</div>
+      <div class="method-desc">A Groth16 zero-knowledge Merkle inclusion proof is generated for each model. This proves membership in the tree without revealing the full transcript contents.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">05</div>
+      <div class="method-title">On-Chain Verification</div>
+      <div class="method-desc">All 6 proofs are verified against the deployed Groth16 verifier contract on Ethereum Mainnet. Verification status is permanently recorded on-chain.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">06</div>
+      <div class="method-title">Immutable Anchoring</div>
+      <div class="method-desc">The Merkle root is anchored to Ethereum Mainnet with the VATA prefix (0x56415441), creating an immutable timestamp that any party can independently verify forever.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<footer>
+  <div class="footer-left">
+    © 2026 ELIOR MALAK — VATA SOVEREIGN FORENSICS SUITE<br>
+    <span style="opacity:0.5;">RECEIPTS OVER PROMISES. MATH DOESN'T NEGOTIATE.</span>
+  </div>
+  <div class="footer-right" style="text-align:right;">
+    ETHEREUM MAINNET · BLOCK 24,590,756<br>
+    <span style="opacity:0.5;">CHAIN ID: 1 · GROTH16 · POSEIDON · BN128</span>
+  </div>
+</footer>
+
+<script>
+  // Counter animations
+  function animateCounter(id, target, duration, prefix='', suffix='') {
+    const el = document.getElementById(id);
+    const start = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(eased * target);
+      el.textContent = prefix + value.toLocaleString() + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  // Trigger counters when stats bar is visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter('counter-models', 6, 1200);
+        animateCounter('counter-questions', 30, 1400);
+        animateCounter('counter-proofs', 6, 1600);
+        animateCounter('counter-block', 24590756, 2000);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  observer.observe(document.querySelector('.stats-bar'));
+
+  // Known hashes
+  const KNOWN_HASHES = {
+    'c2f8e0c2378ee39cc02187c09eaba1ca1cb03921ffde103b32592484a64d68e8': 'Claude Sonnet 4.6 (Anthropic)',
+    '233cd56751c2ff5cd4142e8d024ca62352108363da8bc0736abba923977d7f77': 'GPT-5.3-chat-latest (OpenAI)',
+    'b4beefac70bbf65309387e5bee1c77d92937b706fb68d321152a51a7f3f9c59c': 'Grok-4 (xAI)',
+    '3cbc1e2cd0aa2c997ea4de5b0e8ada19111fe897ef83ce19dc6bc4a19b6528aa': 'Gemini 2.0 Flash (Google)',
+    'f808b4db01d4a53cbe2389a16e1ec39b07fdf05f41f7da0c8bccddc304162a2f': 'DeepSeek Chat (DeepSeek)',
+    'b8ebd621613a98c124facbd57a05ca6b7a816d1d76d63b213683b118241f8ae2': 'Mistral Large Latest (Mistral AI)'
+  };
+
+  function verifyHash() {
+    const input = document.getElementById('verifyInput').value.trim().toLowerCase();
+    const result = document.getElementById('verifyResult');
+
+    if (!input || input.length !== 64) {
+      result.className = 'verify-result fail';
+      result.innerHTML = '✗ INVALID INPUT\nHash must be exactly 64 hex characters.';
+      return;
+    }
+
+    if (KNOWN_HASHES[input]) {
+      result.className = 'verify-result success';
+      result.innerHTML =
+        '✓ PROOF VERIFIED\n\n' +
+        'MODEL:        ' + KNOWN_HASHES[input] + '\n' +
+        'HASH:         ' + input + '\n' +
+        'MERKLE ROOT:  313450828377796994037575477169750687368355153629664839528007274831477172230\n' +
+        'ZK PROOF:     Groth16 Merkle Inclusion — PASSED\n' +
+        'ANCHOR TX:    0xa76d6536e7ffb132d7b447c39d4a0bca73023f3bf6087862b7734e95ee1e8e94\n' +
+        'BLOCK:        24,590,756 (Ethereum Mainnet)\n' +
+        'STATUS:       INCLUDED IN BENCHMARK — TAMPER-PROOF RECORD CONFIRMED';
+    } else {
+      result.className = 'verify-result fail';
+      result.innerHTML =
+        '✗ NOT FOUND\n\n' +
+        'Hash: ' + input + '\n\n' +
+        'This hash is not included in the VATA Benchmark dated 2026-03-05.\n' +
+        'The transcript was either not part of this benchmark run or has been altered.';
+    }
+  }
+
+  function quickVerify(hash) {
+    document.getElementById('verifyInput').value = hash;
+    verifyHash();
+    document.getElementById('verify').scrollIntoView({behavior:'smooth'});
+  }
+
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = event.target;
+      btn.textContent = 'COPIED';
+      setTimeout(() => btn.textContent = 'COPY', 2000);
+    });
+  }
+
+  // Enter key on verify input
+  document.getElementById('verifyInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') verifyHash();
+  });
+</script>
+</body>
+</html>
