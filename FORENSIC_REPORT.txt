@@ -1,0 +1,136 @@
+================================================================
+VATA FORENSIC BENCHMARK REPORT
+Verification of Authentic Thought Architecture
+================================================================
+
+DATE:             2026-03-05T10:47:19.375Z
+INVESTIGATOR:     Elior Malak / LHMisme420
+FRAMEWORK:        VATA Sovereign Forensics Suite
+CLASSIFICATION:   PUBLIC FORENSIC RECORD
+
+================================================================
+EXECUTIVE SUMMARY
+================================================================
+
+This report presents cryptographically verified behavioral
+benchmarks of six frontier AI models tested simultaneously
+on March 5, 2026. Each model was subjected to an identical
+30-question hallucination and factual accuracy test.
+
+Results are sealed via Groth16 zero-knowledge proofs and
+anchored permanently on Ethereum Mainnet. This constitutes
+a forensic-grade, court-admissible, tamper-proof record of
+AI model behavior at this point in time.
+
+================================================================
+MODELS TESTED
+================================================================
+
+1. Claude Sonnet 4.6 (Anthropic)
+   SHA-256: c2f8e0c2378ee39cc02187c09eaba1ca1cb03921ffde103b32592484a64d68e8
+   ZK Proof: VERIFIED (Groth16 Merkle Inclusion)
+
+2. GPT-5.3-chat-latest (OpenAI)
+   SHA-256: 233cd56751c2ff5cd4142e8d024ca62352108363da8bc0736abba923977d7f77
+   ZK Proof: VERIFIED (Groth16 Merkle Inclusion)
+
+3. Grok-4 (xAI)
+   SHA-256: b4beefac70bbf65309387e5bee1c77d92937b706fb68d321152a51a7f3f9c59c
+   ZK Proof: VERIFIED (Groth16 Merkle Inclusion)
+
+4. Gemini 2.0 Flash (Google)
+   SHA-256: 3cbc1e2cd0aa2c997ea4de5b0e8ada19111fe897ef83ce19dc6bc4a19b6528aa
+   ZK Proof: VERIFIED (Groth16 Merkle Inclusion)
+
+5. DeepSeek Chat (DeepSeek)
+   SHA-256: f808b4db01d4a53cbe2389a16e1ec39b07fdf05f41f7da0c8bccddc304162a2f
+   ZK Proof: VERIFIED (Groth16 Merkle Inclusion)
+
+6. Mistral Large Latest (Mistral AI)
+   SHA-256: b8ebd621613a98c124facbd57a05ca6b7a816d1d76d63b213683b118241f8ae2
+   ZK Proof: VERIFIED (Groth16 Merkle Inclusion)
+
+================================================================
+CRYPTOGRAPHIC VERIFICATION
+================================================================
+
+MERKLE ROOT (all 6 transcripts):
+313450828377796994037575477169750687368355153629664839528007274831477172230
+
+ZERO-KNOWLEDGE PROOF SYSTEM: Groth16
+CIRCUIT: VATABenchmark(depth=3) - Poseidon hash Merkle tree
+VERIFICATION: ALL 6 PROOFS PASSED
+
+VERIFIER CONTRACT (Ethereum Mainnet):
+0x23eF252Ee5F6105AD5C21972E686a736A5F40481
+
+ANCHOR TRANSACTION:
+0xa76d6536e7ffb132d7b447c39d4a0bca73023f3bf6087862b7734e95ee1e8e94
+
+BLOCK NUMBER: 24590756
+NETWORK: Ethereum Mainnet (Chain ID: 1)
+ANCHOR PREFIX: 0x56415441 (VATA)
+
+ETHERSCAN VERIFICATION:
+https://etherscan.io/tx/0xa76d6536e7ffb132d7b447c39d4a0bca73023f3bf6087862b7734e95ee1e8e94
+
+================================================================
+METHODOLOGY
+================================================================
+
+1. QUESTION SET: 30 standardized factual and hallucination
+   detection questions covering history, science, mathematics,
+   medicine, and current events.
+
+2. SIMULTANEOUS TESTING: All 6 models queried via official
+   APIs on the same date with identical question sets.
+
+3. TRANSCRIPT HASHING: Each model response transcript hashed
+   via SHA-256 producing a unique fingerprint.
+
+4. MERKLE TREE: All 6 transcript hashes assembled into a
+   depth-3 Poseidon hash Merkle tree.
+
+5. ZK PROOF GENERATION: Groth16 Merkle inclusion proof
+   generated for each model proving its transcript is
+   included in the Merkle tree without revealing contents.
+
+6. ON-CHAIN ANCHORING: Merkle root anchored to Ethereum
+   Mainnet with VATA prefix creating immutable timestamp.
+
+================================================================
+CHAIN OF CUSTODY
+================================================================
+
+Transcript files location:
+C:\Users\lhmsi\evidence\vata-benchmark-zk\benchmark_results\
+
+ZK Proof files location:
+C:\Users\lhmsi\evidence\vata-benchmark-zk\benchmark_proofs\
+
+Files produced per model:
+  [model]_transcript.txt  - Raw API responses
+  [model]_input.json      - ZK circuit input
+  [model]_proof.json      - Groth16 proof
+  [model]_public.json     - Public signals
+  [model]_witness.wtns    - Circuit witness
+
+================================================================
+LEGAL NOTICE
+================================================================
+
+This document constitutes a forensic record produced using
+cryptographic verification methods. The on-chain anchor
+transaction provides an immutable timestamp and proof of
+existence for all benchmark data referenced herein.
+
+The Merkle root and ZK proofs are mathematically verifiable
+by any independent party using the verification key and
+circuit parameters published with this report.
+
+Produced by: VATA Sovereign Forensics Suite
+Copyright 2026 Elior Malak. All rights reserved.
+
+================================================================
+END OF REPORT
+================================================================
