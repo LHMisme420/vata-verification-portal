@@ -1,0 +1,1 @@
+﻿require("fs").writeFileSync("index.html","placeholder");console.log("ready");
